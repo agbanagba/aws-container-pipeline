@@ -1,8 +1,10 @@
 pipeline {
     agent any
 
+    def app = 'capstone-ml-app'
+    def version = '0.1.0-${GIT_BRANCH}.${BUILD_NUMBER}'
+
     stages {
-        
         stage('Checkout') {
             steps {
                 checkout scm
@@ -29,7 +31,6 @@ pipeline {
         }
 
         stage('Image Build') {
-            // Build image and save in workspace. Be sure to version properly before 
             steps {
                 echo 'Image Build'
                 // After building the image, make sure to tag it properly with branch name alias and build number
@@ -42,10 +43,9 @@ pipeline {
             when {
                 anyOf { branch 'release/*'; branch 'master'; branch 'develop' }
             }
-
             steps {
-                // Install AWS CLI
                 echo 'Deploying application image to AWS ECR.'
+                // Check if there is a valid token to authenticate Docker to ECR registry
                 sh 'aws'
             }
         }
