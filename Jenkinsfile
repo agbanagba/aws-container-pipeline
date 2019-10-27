@@ -9,7 +9,7 @@ pipeline {
         def eks_url = ''
         
         stage('Checkout') {
-
+            checkout scm
         }
 
         stage('Install dependencies') {
