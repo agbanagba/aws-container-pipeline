@@ -13,15 +13,18 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 echo 'Installing application dependencies'
-                sh 'python3 -m venv venv && . venv/bin/activate'
-                sh 'pip3 install -r ./app/requirements.txt'
+                withPythonEnv('python3') {
+                    sh 'pip3 install -r ./app/requirements.txt'
+                }
             }
         }
         
         stage('Linitng') {
             steps {
                 echo 'Performing liniting checks.'
-                sh 'pylint ./app/app.py'
+                withPythonEnv('python3') {
+                    sh 'pylint ./app/app.py'
+                }
                 sh 'hadolint Dockerfile'
             }
         }
