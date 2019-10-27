@@ -9,17 +9,6 @@ pipeline {
                 checkout scm
             }
         }
-
-        stage('Install dependencies') {
-            steps {
-                echo 'Installing build dependencies and configuring build environment'
-
-                // Install aws cli and use a default user created for jenkinns builds.
-                sh 'pip3 install --upgrade pip'
-                sh 'pip3 install awscli --upgrade --user'
-                sh 'aws --version'
-            }
-        }
         
         stage('Linitng') {
             // Pylint, hadolint and cloudformation lint.
