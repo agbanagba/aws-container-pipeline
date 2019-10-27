@@ -11,8 +11,8 @@ pipeline {
         }
         
         stage('Linitng') {
-            // Pylint, hadolint and cloudformation lint.
             steps {
+                echo 'Performing liniting checks.'
                 sh 'pylint --disable=R,C,W1203 ./app/app.py'
                 sh 'hadolint Dockerfile'
             }
@@ -72,12 +72,6 @@ pipeline {
                 // Remember to ask for input before trying to deploy to production
                 echo 'Deploying application container to production '
             }
-        }
-    }
-
-    post {
-        always {
-            archiveArtifacts artifacts: '', fingerprint: true
         }
     }
 }
