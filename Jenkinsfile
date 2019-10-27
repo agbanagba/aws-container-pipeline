@@ -1,9 +1,8 @@
+def app = 'capstone-ml-app'
+def version = '0.1.0-${GIT_BRANCH}.${BUILD_NUMBER}'
+
 pipeline {
     agent any
-
-    def app = 'capstone-ml-app'
-    def version = '0.1.0-${GIT_BRANCH}.${BUILD_NUMBER}'
-
     stages {
         stage('Checkout') {
             steps {
