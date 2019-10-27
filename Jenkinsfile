@@ -1,5 +1,5 @@
-def app = 'capstone-ml-app'
-def version = '0.1.0-${GIT_BRANCH}.${BUILD_NUMBER}'
+def app = "capstone-ml-app"
+def version = "0.1.0-${GIT_BRANCH}.${BUILD_NUMBER}"
 
 pipeline {
     agent any
@@ -33,7 +33,8 @@ pipeline {
             steps {
                 echo 'Image Build'
                 // After building the image, make sure to tag it properly with branch name alias and build number
-                sh 'docker build --tag ${app}:${version} .'
+                echo "Image version: ${version}"
+                sh "docker build --tag ${app}:${version} ."
                 sh 'docker images'
             }
         }
