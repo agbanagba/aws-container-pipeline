@@ -13,7 +13,6 @@ pipeline {
         stage('Install dependencies') {
             steps {
                 echo 'Installing build dependencies and configuring build environment'
-                sh 'wget -O /bin/hadolint https://github.com/hadolint/hadolint/releases/download/v1.16.3/hadolint-Linux-x86_64 && chmod +x /bin/hadolint'
 
                 // Install aws cli and use a default user created for jenkinns builds.
                 sh 'pip3 install --upgrade pip'
