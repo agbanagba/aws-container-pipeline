@@ -1,12 +1,13 @@
-def app = "capstone-ml-app"
-def version = "0.1.0-${GIT_BRANCH}.${BUILD_NUMBER}"
+// def app = "capstone-ml-app"
+// def version = "0.1.0-${GIT_BRANCH}.${BUILD_NUMBER}"
 
 pipeline {
     agent any
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                scmVars = checkout scm
+                echo "${scmVars}"
             }
         }
 
