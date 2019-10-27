@@ -65,12 +65,21 @@ pipeline {
 
         stage('Deploy ECR Image to AWS EKS Cluster') {
             when {
-                anyOf { branch 'release/*'; branch 'master'; branch 'develop'
+                anyOf { branch 'release/*'; branch 'develop' }
             }
             steps {
                 echo 'Deploying application to AWS EKS Cluster'
                 // make sure to use a different namespace for a branch. Either release, master, develop
                 sh 'aws'
+            }
+        }
+
+        stage('Deploy to production namespace in AWS EKS Cluster') {
+            when {
+                branch 'master'
+            }
+            steps {
+                // Remember to ask for input before trying to deploy to production
             }
         }
 
