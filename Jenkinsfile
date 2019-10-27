@@ -44,12 +44,15 @@ pipeline {
 
             steps {
                 echo 'Image Build'
-
+                // After building the image, make sure to tag it properly.
             }
         }
 
         stage('Image Scan') {
+            steps {
+                echo 'Scanning Docker Image with aquascan'
 
+            }
         }
 
         stage('Deploy to ECR') {
@@ -59,6 +62,7 @@ pipeline {
 
             steps {
                 // Install AWS CLI
+                echo 'Deploying application image to AWS ECR.'
                 sh 'aws'
             }
         }
@@ -80,11 +84,8 @@ pipeline {
             }
             steps {
                 // Remember to ask for input before trying to deploy to production
+                echo 'Deploying application container to production '
             }
-        }
-
-        stage('Acceptance Tests') {
-
         }
     }
 
