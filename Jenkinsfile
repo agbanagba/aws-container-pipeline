@@ -5,11 +5,11 @@ pipeline {
     }
 
     stages {
-
-        def eks_url = ''
         
         stage('Checkout') {
-            checkout scm
+            steps {
+                checkout scm
+            }
         }
 
         stage('Install dependencies') {
@@ -54,7 +54,7 @@ pipeline {
 
         stage('Deploy to ECR') {
             when {
-
+                anyOf { branch 'release/*'; branch 'master'; branch 'develop' }
             }
 
             steps {
