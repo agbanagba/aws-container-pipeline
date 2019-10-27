@@ -1,5 +1,4 @@
 pipeline {
-
     agent any
 
     stages {
@@ -29,26 +28,13 @@ pipeline {
             }
         }
 
-        stage('Unit Tests') {
-
-            steps {
-                echo 'Unit Tests'
-            }
-        }
-
         stage('Image Build') {
             // Build image and save in workspace. Be sure to version properly before 
-
             steps {
                 echo 'Image Build'
-                // After building the image, make sure to tag it properly.
-            }
-        }
-
-        stage('Image Scan') {
-            steps {
-                echo 'Scanning Docker Image with aquascan'
-
+                // After building the image, make sure to tag it properly with branch name alias and build number
+                sh 'docker build --tag ${app}:${version} .'
+                sh 'docker images'
             }
         }
 
