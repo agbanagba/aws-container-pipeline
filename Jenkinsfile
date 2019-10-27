@@ -13,7 +13,7 @@ pipeline {
         stage('Linitng') {
             steps {
                 echo 'Performing liniting checks.'
-                sh 'pylint --disable=R,C,W1203 ./app/app.py'
+                sh 'pylint ./app/app.py'
                 sh 'hadolint Dockerfile'
             }
         }
