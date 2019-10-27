@@ -9,6 +9,14 @@ pipeline {
                 checkout scm
             }
         }
+
+        stage('Install Dependencies') {
+            steps {
+                echo 'Installing application dependencies'
+                sh 'python3 -m venv venv && ./venv/activate'
+                sh 'pip3 install -r ./app/requirements.txt'
+            }
+        }
         
         stage('Linitng') {
             steps {
