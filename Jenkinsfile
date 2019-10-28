@@ -12,15 +12,6 @@ pipeline {
                 checkout scm
             }
         }
-
-        stage('Install Dependencies') {
-            steps {
-                echo 'Installing application dependencies'
-                withPythonEnv('python3') {
-                    sh 'pip3 install -r ./app/requirements.txt'
-                }
-            }
-        }
         
         stage('Linitng') {
             steps {
