@@ -1,5 +1,11 @@
 pipeline {
     agent any
+
+    environment {
+        AWS_ECR_URI = "642881291524.dkr.ecr.us-east-1.amazonaws.com/capstone"
+        CAPSTONE_ML_APP = "capstone-ml-app"
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -29,7 +35,7 @@ pipeline {
         stage('Image Build') {
             steps {
                 echo 'Image Build'
-                sh "docker build --tag capstone-ml-app:latest ."
+                sh "docker build --tag ${CAPSTONE_ML_APP}:latest ."
                 sh 'docker images'
             }
         }
@@ -40,8 +46,9 @@ pipeline {
             }
             steps {
                 echo 'Deploying application image to AWS ECR.'
-                // Check if there is a valid token to authenticate Docker to ECR registry
-                sh 'aws'
+                sh '$(aws ecr get-login --region us-east-1 --no-include-email)'
+                sh "docker tag ${CAPSTONE_ML_APP} ${AWS_ECR_URI}"
+                sh "docker push ${AWS_ECR_URI}"
             }
         }
 
