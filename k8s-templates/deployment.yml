@@ -1,22 +1,22 @@
-apiVersion: v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
     name: ml-app
 spec: 
     replicas: 1
-    selectors:
+    selector:
       matchLabels:
         app: ml-app
     template:
       metadata:
         labels:
           app: ml-app
-    spec:
-        containers: 
-        - name: ml-app
-          image: 642881291524.dkr.ecr.us-east-1.amazonaws.com/capstone:latest
-          ports:
-            - name: web
-              containerPort: 8080
-              protocol: TCP
+      spec:
+          containers: 
+          - name: ml-app
+            image: 642881291524.dkr.ecr.us-east-1.amazonaws.com/capstone:latest
+            ports:
+              - name: web
+                containerPort: 8080
+                protocol: TCP
             
