@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Deployment
+metadata:
+    name: ml-app
+spec: 
+    replicas: 1
+    spec:
+        containers: 
+        - name: ml-app
+          image: 642881291524.dkr.ecr.us-east-1.amazonaws.com/capstone:latest
+          ports:
+            - name: web
+              containerPort: 8080
+              protocol: TCP
+            
