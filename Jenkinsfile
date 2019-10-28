@@ -4,6 +4,7 @@ pipeline {
     environment {
         AWS_ECR_URI = "642881291524.dkr.ecr.us-east-1.amazonaws.com/capstone"
         CAPSTONE_ML_APP = "capstone-ml-app"
+        VERSION = "${env.BRANCH_NAME}.${BUILD_NUMBER}"
     }
 
     stages {
@@ -35,7 +36,7 @@ pipeline {
         stage('Image Build') {
             steps {
                 echo 'Image Build'
-                sh "docker build --tag ${CAPSTONE_ML_APP}:latest ."
+                sh "docker build --tag ${CAPSTONE_ML_APP}:${VERSION} ."
                 sh 'docker images'
             }
         }
@@ -47,7 +48,7 @@ pipeline {
             steps {
                 echo 'Deploying application image to AWS ECR.'
                 sh '$(aws ecr get-login --region us-east-1 --no-include-email)'
-                sh "docker tag ${CAPSTONE_ML_APP} ${AWS_ECR_URI}"
+                sh "docker tag ${CAPSTONE_ML_APP} ${AWS_ECR_URI}:${VERSION}"
                 sh "docker push ${AWS_ECR_URI}"
             }
         }
@@ -58,8 +59,20 @@ pipeline {
             }
             steps {
                 echo 'Deploying application to AWS EKS Cluster'
-                sh 'kubectl apply -f k8s-templates/deployment.yml'
-                sh 'kubectl apply -f k8s-templates/service.yml'
+                sh "kubectl set image deployment/ml-app ml-app=${AWS_ECR_URI}:${VERSION}"
+                sh 'kubectl get pods'
+            }
+        }
+
+        post {
+            success {
+                echo 'Build successful. Cleaning workspace and docker images'
+                sh "docker image rm ${AWS_ECR_URI}:${VERSION}"
+            }
+
+            failure {
+                echo 'Pipeline failed. Cleaning workspace and docker images'
+                sh "docker image rm ${AWS_ECR_URI}:${VERSION}"
             }
         }
     }
