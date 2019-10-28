@@ -42,7 +42,7 @@ pipeline {
 
         stage('Deploy to ECR') {
             when {
-                anyOf { branch 'release/*'; branch 'master'; branch 'develop' }
+                anyOf { branch 'master'; branch 'develop' }
             }
             steps {
                 echo 'Deploying application image to AWS ECR.'
@@ -54,22 +54,12 @@ pipeline {
 
         stage('Deploy ECR Image to AWS EKS Cluster') {
             when {
-                anyOf { branch 'release/*'; branch 'develop' }
+                anyOf { branch 'master'; branch 'develop' }
             }
             steps {
                 echo 'Deploying application to AWS EKS Cluster'
-                // make sure to use a different namespace for a branch. Either release, master, develop
-                sh 'aws'
-            }
-        }
-
-        stage('Deploy to production namespace in AWS EKS Cluster') {
-            when {
-                branch 'master'
-            }
-            steps {
-                // Remember to ask for input before trying to deploy to production
-                echo 'Deploying application container to production '
+                sh 'kubectl apply -f k8s-templates/deployment.yml'
+                sh 'kubectl apply -f k8s-templates/service.yml'
             }
         }
     }
