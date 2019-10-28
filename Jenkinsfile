@@ -63,8 +63,9 @@ pipeline {
                 sh 'kubectl get pods'
             }
         }
+    }
 
-        post {
+    post {
             success {
                 echo 'Build successful. Cleaning workspace and docker images'
                 sh "docker image rm ${AWS_ECR_URI}:${VERSION}"
@@ -75,5 +76,4 @@ pipeline {
                 sh "docker image rm ${AWS_ECR_URI}:${VERSION}"
             }
         }
-    }
 }
