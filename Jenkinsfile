@@ -1,5 +1,12 @@
 pipeline {
     agent any
+
+    environment {
+        AWS_ECR_URI = "642881291524.dkr.ecr.us-east-1.amazonaws.com/capstone"
+        CAPSTONE_ML_APP = "capstone-ml-app"
+        VERSION = "${env.BRANCH_NAME}.${BUILD_NUMBER}"
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -29,41 +36,44 @@ pipeline {
         stage('Image Build') {
             steps {
                 echo 'Image Build'
-                sh "docker build --tag capstone-ml-app:latest ."
+                sh "docker build --tag ${CAPSTONE_ML_APP}:${VERSION} ."
                 sh 'docker images'
             }
         }
 
         stage('Deploy to ECR') {
             when {
-                anyOf { branch 'release/*'; branch 'master'; branch 'develop' }
+                anyOf { branch 'master'; branch 'develop' }
             }
             steps {
                 echo 'Deploying application image to AWS ECR.'
-                // Check if there is a valid token to authenticate Docker to ECR registry
-                sh 'aws'
+                sh '$(aws ecr get-login --region us-east-1 --no-include-email)'
+                sh "docker tag ${CAPSTONE_ML_APP} ${AWS_ECR_URI}:${VERSION}"
+                sh "docker push ${AWS_ECR_URI}"
             }
         }
 
         stage('Deploy ECR Image to AWS EKS Cluster') {
             when {
-                anyOf { branch 'release/*'; branch 'develop' }
+                anyOf { branch 'master'; branch 'develop' }
             }
             steps {
                 echo 'Deploying application to AWS EKS Cluster'
-                // make sure to use a different namespace for a branch. Either release, master, develop
-                sh 'aws'
-            }
-        }
-
-        stage('Deploy to production namespace in AWS EKS Cluster') {
-            when {
-                branch 'master'
-            }
-            steps {
-                // Remember to ask for input before trying to deploy to production
-                echo 'Deploying application container to production '
+                sh "kubectl set image deployment/ml-app ml-app=${AWS_ECR_URI}:${VERSION}"
+                sh 'kubectl get pods'
             }
         }
     }
+
+    post {
+            success {
+                echo 'Build successful. Cleaning workspace and docker images'
+                sh "docker image rm ${AWS_ECR_URI}:${VERSION}"
+            }
+
+            failure {
+                echo 'Pipeline failed. Cleaning workspace and docker images'
+                sh "docker image rm ${AWS_ECR_URI}:${VERSION}"
+            }
+        }
 }
